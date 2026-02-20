@@ -2,23 +2,44 @@
 <html>
 <head>
     <title>Grab Bicycle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body style="background-color: yellow;">
+<body class="bg-light">
 
-<h1 style="color:red;">GRAB PAGE WORKING</h1>
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center mb-4"> Grab a Bicycle</h2>
 
-<form method="POST">
-    Roll Number:
-    <input type="text" name="roll_no" required><br><br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-    Bicycle Type:
-    <select name="bicycle_type">
-        <option value="Normal">Normal</option>
-        <option value="EV">EV</option>
-    </select><br><br>
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Roll Number</label>
+                <input type="text" name="roll_no" class="form-control" required>
+            </div>
 
-    <button type="submit">Grab</button>
-</form>
+            <div class="mb-3">
+                <label class="form-label">Bicycle Type</label>
+                <select name="bicycle_type" class="form-select">
+                    <option value="Normal">Normal</option>
+                    <option value="EV">EV</option>
+                </select>
+            </div>
 
+            <button type="submit" class="btn btn-primary w-100">Grab Bicycle</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
