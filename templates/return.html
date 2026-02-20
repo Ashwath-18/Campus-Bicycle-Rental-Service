@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vehicle Return Module</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+        }
+
+        .container {
+            width: 480px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            text-align: center;
+            color: #243b55;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 15px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #243b55;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #141e30;
+        }
+
+        .charge-display {
+            text-align: center;
+            font-weight: bold;
+            color: #243b55;
+        }
+    </style>
+
+    <script>
+        function toggleChargeField() {
+            var type = document.getElementById("bicycle_type").value;
+            var chargeSection = document.getElementById("charge_section");
+
+            if (type === "EV") {
+                chargeSection.style.display = "block";
+                document.getElementById("ev_charge").required = true;
+            } else {
+                chargeSection.style.display = "none";
+                document.getElementById("ev_charge").required = false;
+            }
+        }
+
+        function updateChargeValue(val) {
+            document.getElementById("charge_value").innerHTML = val + "%";
+        }
+    </script>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Vehicle Return Form</h2>
+
+    <form method="POST" action="/return">
+
+        <label>Student Roll No</label>
+        <input type="text" name="roll_no" required>
+
+        <label>Student Name</label>
+        <input type="text" name="student_name" required>
+
+        <label>Department</label>
+        <input type="text" name="department" required>
+
+        <label>Contact Number</label>
+        <input type="text" name="contact" required>
+
+        <label>Vehicle Number</label>
+        <input type="text" name="vehicle_number" required>
+
+        <label>Type of Bicycle</label>
+        <select name="bicycle_type" id="bicycle_type" onchange="toggleChargeField()" required>
+            <option value="">-- Select Type --</option>
+            <option value="Normal">Normal</option>
+            <option value="EV">EV</option>
+        </select>
+
+        <!-- EV Charge Section -->
+        <div id="charge_section" style="display:none;">
+            <label>EV Charge Percentage</label>
+            <input type="range" id="ev_charge" name="ev_charge"
+                   min="0" max="100" value="50"
+                   oninput="updateChargeValue(this.value)">
+            
+            <div class="charge-display">
+                Remaining Charge: <span id="charge_value">50%</span>
+            </div>
+        </div>
+
+        <br>
+        <button type="submit">Process Return</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
