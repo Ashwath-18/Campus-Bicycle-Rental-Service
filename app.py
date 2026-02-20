@@ -22,7 +22,19 @@ def test_db():
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT COUNT(*) as count FROM Bicycles WHERE type='Normal' AND status='Available'")
+    normal_count = cursor.fetchone()['count']
+
+    cursor.execute("SELECT COUNT(*) as count FROM Bicycles WHERE type='EV' AND status='Available'")
+    ev_count = cursor.fetchone()['count']
+
+    cursor.close()
+    conn.close()
+
+    return render_template('index.html', normal=normal_count, ev=ev_count)
 
 
 

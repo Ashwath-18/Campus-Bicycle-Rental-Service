@@ -5,5 +5,5 @@ class Config:
 
     DB_HOST = 'localhost'
     DB_USER = 'root'
-    DB_PASSWORD = 'ceasefire'
+    DB_PASSWORD = 'achu'
     DB_NAME = 'campus_bicycle_rental_service'
