@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from config import Config
 from database.db_connection import get_db_connection
-
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -38,9 +38,58 @@ def home():
 
 
 
-@app.route('/return')
+@app.route('/return', methods=['GET', 'POST'])
 def return_bike():
-    return render_template('return.html')
+
+    if request.method == 'POST':
+        roll_no = request.form['roll_no']
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # 1️⃣ Find active rental
+        cursor.execute("""
+            SELECT Rentals.*, Students.name
+            FROM Rentals
+            JOIN Students ON Rentals.roll_no = Students.roll_no
+            WHERE Rentals.roll_no = %s AND Rentals.return_time IS NULL
+        """, (roll_no,))
+
+        rental = cursor.fetchone()
+
+        if not rental:
+            return "No active rental found for this student."
+
+        bicycle_id = rental['bicycle_id']
+        student_name = rental['name']
+        return_time = datetime.now()
+
+        # 2️⃣ Update Rentals table
+        cursor.execute("""
+            UPDATE Rentals
+            SET return_time = %s
+            WHERE rental_id = %s
+        """, (return_time, rental['rental_id']))
+
+        # 3️⃣ Update Bicycle status
+        cursor.execute("""
+            UPDATE Bicycles
+            SET status = 'Available'
+            WHERE bicycle_id = %s
+        """, (bicycle_id,))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return render_template(
+            "return_success.html",
+            name=student_name,
+            bicycle_id=bicycle_id,
+            return_time=return_time
+        )
+
+    return render_template("return.html")
 
 @app.route('/grab', methods=['GET', 'POST'])
 def grab_bicycle():
