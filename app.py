@@ -105,6 +105,14 @@ def grab_bicycle():
         cursor = conn.cursor(dictionary=True)
 
         try:
+            # 1️⃣ Get student details
+            cursor.execute("SELECT * FROM Students WHERE roll_no = %s", (roll_no,))
+            student = cursor.fetchone()
+
+            if not student:
+                return "Student not found."
+
+            # 2️⃣ Check active rental
             cursor.execute("""
                 SELECT * FROM Rentals
                 WHERE roll_no = %s AND return_time IS NULL
@@ -114,6 +122,7 @@ def grab_bicycle():
             if active_rental:
                 return "You already have an active rental."
 
+            # 3️⃣ Find available bicycle
             cursor.execute("""
                 SELECT * FROM Bicycles
                 WHERE type = %s AND status = 'Available'
@@ -124,11 +133,15 @@ def grab_bicycle():
             if not bicycle:
                 return "No bicycles available."
 
+            grab_time = datetime.now().replace(second=0, microsecond=0)
+
+            # 4️⃣ Insert rental
             cursor.execute("""
                 INSERT INTO Rentals (roll_no, bicycle_id, grab_time)
-                VALUES (%s, %s, NOW())
-            """, (roll_no, bicycle['bicycle_id']))
+                VALUES (%s, %s, %s)
+            """, (roll_no, bicycle['bicycle_id'], grab_time))
 
+            # 5️⃣ Update bicycle status
             cursor.execute("""
                 UPDATE Bicycles
                 SET status = 'In Use'
@@ -136,7 +149,17 @@ def grab_bicycle():
             """, (bicycle['bicycle_id'],))
 
             conn.commit()
-            return f"Bicycle No.{bicycle['bicycle_id']} Grabbed Successfully!"
+
+            formatted_date = grab_time.strftime("%Y-%m-%d")
+            formatted_time = grab_time.strftime("%H:%M")
+
+            return render_template(
+                "grab_success.html",
+                name=student['name'],
+                bicycle_id=bicycle['bicycle_id'],
+                date=formatted_date,
+                time=formatted_time
+            )
 
         except Exception as e:
             conn.rollback()
