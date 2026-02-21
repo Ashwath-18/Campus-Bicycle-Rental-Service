@@ -62,7 +62,7 @@ def return_bike():
 
         bicycle_id = rental['bicycle_id']
         student_name = rental['name']
-        return_time = datetime.now()
+        return_time = datetime.now().replace(second=0, microsecond=0)
 
         # 2️⃣ Update Rentals table
         cursor.execute("""
@@ -82,11 +82,15 @@ def return_bike():
         cursor.close()
         conn.close()
 
+        formatted_date = return_time.strftime("%Y-%m-%d")
+        formatted_time = return_time.strftime("%H:%M")
+
         return render_template(
             "return_success.html",
             name=student_name,
             bicycle_id=bicycle_id,
-            return_time=return_time
+            date=formatted_date,
+            time=formatted_time
         )
 
     return render_template("return.html")
@@ -132,7 +136,7 @@ def grab_bicycle():
             """, (bicycle['bicycle_id'],))
 
             conn.commit()
-            return f"Bicycle {bicycle['bicycle_id']} Grabbed Successfully!"
+            return f"Bicycle No.{bicycle['bicycle_id']} Grabbed Successfully!"
 
         except Exception as e:
             conn.rollback()
