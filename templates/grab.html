@@ -35,6 +35,18 @@
                 </select>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">Select Station</label>
+                <select name="station_id" class="form-select" required>
+                    <option value="">-- Select Station --</option>
+                    {% for station in stations %}
+                        <option value="{{ station.station_id }}">
+                            {{ station.block_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-primary w-100">Grab Bicycle</button>
         </form>
     </div>

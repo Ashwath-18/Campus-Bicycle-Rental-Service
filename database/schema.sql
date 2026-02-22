@@ -24,11 +24,15 @@ CREATE TABLE Rentals (
     roll_no VARCHAR(20),
     bicycle_id INT,
     grab_time DATETIME,
+    grab_station_id INT,
     return_time DATETIME,
-    returned_station INT,
+    return_station_id INT,
     FOREIGN KEY (roll_no) REFERENCES Students(roll_no),
-    FOREIGN KEY (bicycle_id) REFERENCES Bicycles(bicycle_id)
+    FOREIGN KEY (bicycle_id) REFERENCES Bicycles(bicycle_id),
+    FOREIGN KEY (grab_station_id) REFERENCES Stations(station_id),
+    FOREIGN KEY (return_station_id) REFERENCES Stations(station_id)
 );
+
 
 INSERT INTO Stations (station_id, block_name, total_slots) VALUES
 (1, 'Kashyapa Bhavanam', 20),
@@ -39,7 +43,18 @@ INSERT INTO Stations (station_id, block_name, total_slots) VALUES
 (6, 'Agasthya Bhavanam', 20),
 (7, 'Gauthama Bhavanam (PG Boys)', 20),
 (8, 'Kapila Bhavanam', 20),
-(9, 'Bhrigu Bhavanam', 20);
+(9, 'Bhrigu Bhavanam', 20),
+(10, 'Adithi Bhavanam', 20),
+(11, 'Mythreyi Bhavanam', 20),
+(12, 'Gargi Bhavanam', 20),
+(13, 'Savithri Bhavanam', 20),
+(14, 'Academic Block 1 - AB-1', 30),
+(15, 'Academic Block 2 - AB-2', 30),
+(16, 'Academic Block 3 - AB-3', 30),
+(17, 'MBA / Business Block', 25),
+(18, 'Sopanam Canteen', 20),
+(19, 'Samudra Canteen', 20),
+(20, 'MBA Canteen', 20);
 
 INSERT INTO Bicycles (bicycle_id, type, station_id, status, battery_status) VALUES
 (1, 'Normal', 1, 'Available', NULL),
@@ -61,22 +76,6 @@ INSERT INTO Bicycles (bicycle_id, type, station_id, status, battery_status) VALU
 (17, 'Normal', 9, 'Available', NULL),
 (18, 'EV', 9, 'Available', 'Full');
 
-INSERT INTO Stations (station_id, block_name, total_slots) VALUES
-(10, 'Adithi Bhavanam', 20),
-(11, 'Mythreyi Bhavanam', 20),
-(12, 'Gargi Bhavanam', 20),
-(13, 'Savithri Bhavanam', 20);
-
-INSERT INTO Stations (station_id, block_name, total_slots) VALUES
-(14, 'Academic Block 1 - AB-1', 30),
-(15, 'Academic Block 2 - AB-2', 30),
-(16, 'Academic Block 3 - AB-3', 30),
-(17, 'MBA / Business Block', 25);
-
-INSERT INTO Stations (station_id, block_name, total_slots) VALUES
-(18, 'Sopanam Canteen', 20),
-(19, 'Samudra Canteen', 20),
-(20, 'MBA Canteen', 20);
 
 INSERT INTO Students (roll_no, name) VALUES
 ('CB.PS.I5DAS24001', 'Abhiram Pazhayath'),
@@ -134,3 +133,39 @@ INSERT INTO Students (roll_no, name) VALUES
 ('CB.PS.I5DAS24056', 'Karan S'),
 ('CB.PS.I5DAS24057', 'Cavin Gaurav B'),
 ('CB.PS.I5DAS24058', 'Sahana Vardhini K');
+
+
+# Inserting bicycles for all stations
+DELIMITER $$
+
+CREATE PROCEDURE insert_all_bicycles()
+BEGIN
+    DECLARE station INT DEFAULT 1;
+    DECLARE normal_count INT;
+    DECLARE ev_count INT;
+
+    WHILE station <= 20 DO
+
+        SET normal_count = 1;
+        WHILE normal_count <= 50 DO
+            INSERT INTO Bicycles (type, station_id, status, battery_status)
+            VALUES ('Normal', station, 'Available', NULL);
+            SET normal_count = normal_count + 1;
+        END WHILE;
+
+        SET ev_count = 1;
+        WHILE ev_count <= 20 DO
+            INSERT INTO Bicycles (type, station_id, status, battery_status)
+            VALUES ('EV', station, 'Available', 'Full');
+            SET ev_count = ev_count + 1;
+        END WHILE;
+
+        SET station = station + 1;
+
+    END WHILE;
+
+END$$
+
+DELIMITER ;
+
+CALL insert_all_bicycles();
