@@ -2,13 +2,57 @@
 <html>
 <head>
     <title>Grab Bicycle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        }
+
+        .card {
+            border-radius: 18px;
+        }
+
+        .bike-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: white;
+        }
+
+        .bike-card img {
+            height: 180px;
+            object-fit: contain;
+        }
+
+        .bike-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .bike-card.selected {
+            border: 2px solid #0d6efd;
+            box-shadow: 0 10px 30px rgba(13,110,253,0.3);
+        }
+
+        .btn-primary {
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+    </style>
 </head>
-<body class="bg-light">
+
+<body>
 
 <div class="container mt-5">
     <div class="card shadow p-4">
-        <h2 class="text-center mb-4"> Grab a Bicycle</h2>
+        <h2 class="text-center mb-4">🚲 Grab a Bicycle</h2>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -22,19 +66,42 @@
         {% endwith %}
 
         <form method="POST">
+
+            <!-- Roll Number -->
             <div class="mb-3">
                 <label class="form-label">Roll Number</label>
                 <input type="text" name="roll_no" class="form-control" required>
             </div>
 
-            <div class="mb-3">
+            <!-- Bicycle Type Image Selection -->
+            <div class="mb-4">
                 <label class="form-label">Bicycle Type</label>
-                <select name="bicycle_type" class="form-select">
-                    <option value="Normal">Normal</option>
-                    <option value="EV">EV</option>
-                </select>
+
+                <!-- Hidden input -->
+                <input type="hidden" name="bicycle_type" id="bicycle_type" value="Normal">
+
+                <div class="row text-center">
+
+                    <!-- Normal -->
+                    <div class="col-md-6">
+                        <div class="bike-card selected" onclick="selectBike('Normal', this)">
+                            <img src="{{ url_for('static', filename='images/normal.png') }}" class="img-fluid">
+                            <h6 class="mt-2">Normal Bicycle</h6>
+                        </div>
+                    </div>
+
+                    <!-- EV -->
+                    <div class="col-md-6">
+                        <div class="bike-card" onclick="selectBike('EV', this)">
+                            <img src="{{ url_for('static', filename='images/ev.png') }}" class="img-fluid">
+                            <h6 class="mt-2">EV Bicycle ⚡</h6>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
+            <!-- Station -->
             <div class="mb-3">
                 <label class="form-label">Select Station</label>
                 <select name="station_id" class="form-select" required>
@@ -48,10 +115,26 @@
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Grab Bicycle</button>
+
         </form>
     </div>
 </div>
 
+<!-- JS -->
+<script>
+function selectBike(type, element) {
+
+    document.getElementById("bicycle_type").value = type;
+
+    document.querySelectorAll(".bike-card").forEach(card => {
+        card.classList.remove("selected");
+    });
+
+    element.classList.add("selected");
+}
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
