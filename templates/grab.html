@@ -8,40 +8,109 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+
+        /* ===== Premium Background ===== */
         body {
-            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(13,110,253,0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(25,135,84,0.15), transparent 40%),
+                linear-gradient(135deg, #eef2f3, #dfe9f3);
+            font-family: 'Segoe UI', sans-serif;
         }
 
+        /* ===== Glass Card ===== */
         .card {
-            border-radius: 18px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow:
+                0 8px 32px rgba(0,0,0,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.6);
         }
 
+        h2 {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== Bike Cards (Solid White) ===== */
         .bike-card {
             border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 15px;
+            border-radius: 20px;
+            padding: 25px;
             cursor: pointer;
-            transition: 0.3s;
-            background: white;
+            transition: all 0.35s ease;
+            background: #ffffff;
+            position: relative;
         }
 
         .bike-card img {
             height: 180px;
             object-fit: contain;
+            transition: transform 0.4s ease;
         }
 
         .bike-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .bike-card:hover img {
+            transform: scale(1.08);
         }
 
         .bike-card.selected {
             border: 2px solid #0d6efd;
-            box-shadow: 0 10px 30px rgba(13,110,253,0.3);
+            box-shadow: 0 15px 40px rgba(13,110,253,0.35);
         }
 
+        /* ===== Availability Badge ===== */
+        .availability-badge {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 7px 14px;
+            border-radius: 25px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .available-high {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .available-low {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .available-zero {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ===== Premium Button ===== */
         .btn-primary {
-            border-radius: 10px;
+            border-radius: 16px;
+            padding: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #0d6efd, #3b82f6);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(13,110,253,0.4);
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
             padding: 10px;
         }
 
@@ -51,42 +120,34 @@
 <body>
 
 <div class="container mt-5">
-    <div class="card shadow p-4">
-        <h2 class="text-center mb-4">🚲 Grab a Bicycle</h2>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    <div class="card shadow-lg p-5">
+        <h2 class="text-center mb-4"> Grab a Bicycle</h2>
 
         <form method="POST">
 
             <!-- Roll Number -->
-            <div class="mb-3">
+            <div class="mb-4">
                 <label class="form-label">Roll Number</label>
                 <input type="text" name="roll_no" class="form-control" required>
             </div>
 
-            <!-- Bicycle Type Image Selection -->
+            <!-- Bicycle Type -->
             <div class="mb-4">
-                <label class="form-label">Bicycle Type</label>
+                <label class="form-label mb-3">Bicycle Type</label>
 
-                <!-- Hidden input -->
                 <input type="hidden" name="bicycle_type" id="bicycle_type" value="Normal">
 
-                <div class="row text-center">
+                <div class="row text-center g-4">
 
                     <!-- Normal -->
                     <div class="col-md-6">
                         <div class="bike-card selected" onclick="selectBike('Normal', this)">
                             <img src="{{ url_for('static', filename='images/normal.png') }}" class="img-fluid">
-                            <h6 class="mt-2">Normal Bicycle</h6>
+                            <h6 class="mt-3 fw-bold">Normal Bicycle</h6>
+
+                            <span id="normalBadge" class="availability-badge">
+                                Available: <span id="normalCount">{{ availability['Normal'] }}</span>
+                            </span>
                         </div>
                     </div>
 
@@ -94,7 +155,11 @@
                     <div class="col-md-6">
                         <div class="bike-card" onclick="selectBike('EV', this)">
                             <img src="{{ url_for('static', filename='images/ev.png') }}" class="img-fluid">
-                            <h6 class="mt-2">EV Bicycle ⚡</h6>
+                            <h6 class="mt-3 fw-bold">EV Bicycle </h6>
+
+                            <span id="evBadge" class="availability-badge">
+                                Available: <span id="evCount">{{ availability['EV'] }}</span>
+                            </span>
                         </div>
                     </div>
 
@@ -102,9 +167,9 @@
             </div>
 
             <!-- Station -->
-            <div class="mb-3">
+            <div class="mb-4">
                 <label class="form-label">Select Station</label>
-                <select name="station_id" class="form-select" required>
+                <select name="station_id" id="stationSelect" class="form-select" required>
                     <option value="">-- Select Station --</option>
                     {% for station in stations %}
                         <option value="{{ station.station_id }}">
@@ -122,16 +187,54 @@
 
 <!-- JS -->
 <script>
+
 function selectBike(type, element) {
-
     document.getElementById("bicycle_type").value = type;
-
-    document.querySelectorAll(".bike-card").forEach(card => {
-        card.classList.remove("selected");
-    });
-
+    document.querySelectorAll(".bike-card").forEach(card => card.classList.remove("selected"));
     element.classList.add("selected");
 }
+
+function updateBadge(count, badgeId) {
+    const badge = document.getElementById(badgeId);
+    badge.classList.remove("available-high", "available-low", "available-zero");
+
+    if (count == 0) {
+        badge.classList.add("available-zero");
+    } else if (count < 5) {
+        badge.classList.add("available-low");
+    } else {
+        badge.classList.add("available-high");
+    }
+}
+
+// Initial badge colors
+updateBadge(parseInt(document.getElementById("normalCount").innerText), "normalBadge");
+updateBadge(parseInt(document.getElementById("evCount").innerText), "evBadge");
+
+// Station change
+document.getElementById("stationSelect").addEventListener("change", function() {
+
+    const stationId = this.value;
+
+    if (!stationId) {
+        location.reload();
+        return;
+    }
+
+    fetch(`/get-availability/${stationId}`)
+        .then(response => response.json())
+        .then(data => {
+
+            document.getElementById("normalCount").innerText = data.Normal;
+            document.getElementById("evCount").innerText = data.EV;
+
+            updateBadge(data.Normal, "normalBadge");
+            updateBadge(data.EV, "evBadge");
+
+        })
+        .catch(error => console.error("Error:", error));
+});
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

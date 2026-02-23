@@ -2,24 +2,83 @@
 <html>
 <head>
     <title>Campus Bicycle Rental</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .kiosk-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .kiosk-wrapper img {
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;   /* fills entire screen */
+        }
+
+        .buttons {
+            position: absolute;
+
+            /* Adjust ONLY these two values once */
+            top: 52%;
+            left: 30%;
+
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 250px;
+        }
+
+        .btn {
+            padding: 18px;
+            font-size: 20px;
+            font-weight: 600;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s ease;
+            color: white;
+        }
+
+        .get-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .return-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🚲 Campus Free Bicycle Rental Service</h1>
-    <p class="tagline">Smart Mobility Solution for Sustainable Campus</p>
+<div class="kiosk-wrapper">
 
-    <div class="availability">
-        <h2>Live Availability</h2>
-        <p>Normal Bicycles Available: <strong>{{ normal }}</strong></p>
-        <p>EV Bicycles Available: <strong>{{ ev }}</strong></p>
+    <img src="{{ url_for('static', filename='images/kiosk-bg.png') }}">
+
+    <div class="buttons">
+        <a href="/grab">
+            <button class="btn get-btn">Grab Bicycle</button>
+        </a>
+
+        <a href="/return">
+            <button class="btn return-btn">Return Bicycle</button>
+        </a>
     </div>
 
-    <div class="actions">
-        <a href="/grab" class="btn">Grab Bicycle</a>
-        <a href="/return" class="btn return">Return Bicycle</a>
-    </div>
 </div>
 
 </body>
