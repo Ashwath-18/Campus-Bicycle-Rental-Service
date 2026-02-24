@@ -3,6 +3,7 @@ from config import Config
 from database.db_connection import get_db_connection
 from datetime import datetime
 
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -51,9 +52,6 @@ def home():
     return render_template('index.html', normal=normal, ev=ev)
 
 # ================= RETURN MODULE =================
-from flask import Flask, render_template, request, redirect, url_for
-from datetime import datetime
-
 @app.route('/return', methods=['GET', 'POST'])
 def return_bike():
     conn = get_db_connection()
@@ -253,7 +251,10 @@ def grab_bicycle():
             # 3️⃣ Find available bike
             cursor.execute("""
                 SELECT * FROM Bicycles
-                WHERE type=%s AND status='Available' AND station_id=%s
+                WHERE type=%s 
+                AND status='Available'
+                AND station_id=%s
+                AND (type='Normal' OR battery_percentage >= 5)
                 LIMIT 1
             """, (bicycle_type, station_id))
 
@@ -314,6 +315,7 @@ def grab_bicycle():
         SELECT type, COUNT(*) as count
         FROM Bicycles
         WHERE status='Available'
+        AND (type='Normal' OR battery_percentage >= 5)
         GROUP BY type
     """)
     results = cursor.fetchall()
@@ -344,6 +346,7 @@ def get_availability(station_id):
         SELECT type, COUNT(*) as count
         FROM Bicycles
         WHERE station_id=%s AND status='Available'
+        AND (type='Normal' OR battery_percentage >= 5) 
         GROUP BY type
     """, (station_id,))
 

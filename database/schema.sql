@@ -15,7 +15,7 @@ CREATE TABLE Bicycles (
     type ENUM('Normal','EV'),
     station_id INT,
     status ENUM('Available','In Use','Maintenance'),
-    battery_status VARCHAR(50),
+    battery_percentage INT DEFAULT NULL,
     FOREIGN KEY (station_id) REFERENCES Stations(station_id)
 );
 
@@ -56,25 +56,25 @@ INSERT INTO Stations (station_id, block_name, total_slots) VALUES
 (19, 'Samudra Canteen', 20),
 (20, 'MBA Canteen', 20);
 
-INSERT INTO Bicycles (bicycle_id, type, station_id, status, battery_status) VALUES
+INSERT INTO Bicycles (bicycle_id, type, station_id, status, battery_percentage) VALUES
 (1, 'Normal', 1, 'Available', NULL),
-(2, 'EV', 1, 'Available', 'Full'),
+(2, 'EV', 1, 'Available', '100'),
 (3, 'Normal', 2, 'Available', NULL),
-(4, 'EV', 2, 'Available', 'Full'),
+(4, 'EV', 2, 'Available', '100'),
 (5, 'Normal', 3, 'Available', NULL),
-(6, 'EV', 3, 'Available', 'Full'),
+(6, 'EV', 3, 'Available', '100'),
 (7, 'Normal', 4, 'Available', NULL),
-(8, 'EV', 4, 'Available', 'Full'),
+(8, 'EV', 4, 'Available', '100'),
 (9, 'Normal', 5, 'Available', NULL),
-(10, 'EV', 5, 'Available', 'Full'),
+(10, 'EV', 5, 'Available', '100'),
 (11, 'Normal', 6, 'Available', NULL),
-(12, 'EV', 6, 'Available', 'Full'),
+(12, 'EV', 6, 'Available', '100'),
 (13, 'Normal', 7, 'Available', NULL),
-(14, 'EV', 7, 'Available', 'Full'),
+(14, 'EV', 7, 'Available', '100'),
 (15, 'Normal', 8, 'Available', NULL),
-(16, 'EV', 8, 'Available', 'Full'),
+(16, 'EV', 8, 'Available', '100'),
 (17, 'Normal', 9, 'Available', NULL),
-(18, 'EV', 9, 'Available', 'Full');
+(18, 'EV', 9, 'Available', '100');
 
 
 INSERT INTO Students (roll_no, name) VALUES
@@ -148,15 +148,15 @@ BEGIN
 
         SET normal_count = 1;
         WHILE normal_count <= 50 DO
-            INSERT INTO Bicycles (type, station_id, status, battery_status)
+            INSERT INTO Bicycles (type, station_id, status, battery_percentage)
             VALUES ('Normal', station, 'Available', NULL);
             SET normal_count = normal_count + 1;
         END WHILE;
 
         SET ev_count = 1;
         WHILE ev_count <= 20 DO
-            INSERT INTO Bicycles (type, station_id, status, battery_status)
-            VALUES ('EV', station, 'Available', 'Full');
+            INSERT INTO Bicycles (type, station_id, status, battery_percentage)
+            VALUES ('EV', station, 'Available', 100);
             SET ev_count = ev_count + 1;
         END WHILE;
 

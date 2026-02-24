@@ -8,7 +8,7 @@
 <div class="container mt-5">
     <div class="card shadow p-4">
         <h2 class="text-center mb-4">🔋 EV Battery Percentage</h2>
-        <form method="POST" action="{{ url_for('return_bike') }}">
+        <form method="POST" action="{{ url_for('return_battery') }}">
             <input type="hidden" name="roll_no" value="{{ roll_no }}">
             <input type="hidden" name="station_id" value="{{ station_id }}">
             <input type="hidden" name="bicycle_type" value="EV">

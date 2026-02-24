@@ -131,6 +131,20 @@
                 <input type="text" name="roll_no" class="form-control" required>
             </div>
 
+            <!-- Station -->
+            <div class="mb-4">
+                <label class="form-label">Select Station</label>
+                <select name="station_id" id="stationSelect" class="form-select" required>
+                    <option value="">-- Select Station --</option>
+                    {% for station in stations %}
+                        <option value="{{ station.station_id }}">
+                            {{ station.block_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
             <!-- Bicycle Type -->
             <div class="mb-4">
                 <label class="form-label mb-3">Bicycle Type</label>
@@ -166,19 +180,7 @@
                 </div>
             </div>
 
-            <!-- Station -->
-            <div class="mb-4">
-                <label class="form-label">Select Station</label>
-                <select name="station_id" id="stationSelect" class="form-select" required>
-                    <option value="">-- Select Station --</option>
-                    {% for station in stations %}
-                        <option value="{{ station.station_id }}">
-                            {{ station.block_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-
+            
             <button type="submit" class="btn btn-primary w-100">Grab Bicycle</button>
 
         </form>

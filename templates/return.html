@@ -19,29 +19,13 @@
 <div class="container mt-5">
     <div class="card shadow-lg p-5">
         <h2 class="text-center mb-4">🔁 Return a Bicycle</h2>
-        <form method="POST" action="/return_check">
+        <form method="POST" action="/return">
             <div class="mb-4">
                 <label class="form-label">Roll Number</label>
                 <input type="text" name="roll_no" class="form-control" required>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label mb-3">Bicycle Type</label>
-                <input type="hidden" name="bicycle_type" id="bicycle_type" value="Normal">
-                <div class="row text-center g-4">
-                    <div class="col-md-6">
-                        <div class="bike-card selected" onclick="selectBike('Normal', this)">
-                            <h6 class="mt-3">Normal Bicycle</h6>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="bike-card" onclick="selectBike('EV', this)">
-                            <h6 class="mt-3">EV Bicycle ⚡</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            
             <div class="mb-4 mt-4">
                 <label class="form-label">Return Station</label>
                 <select name="station_id" class="form-select" required>
