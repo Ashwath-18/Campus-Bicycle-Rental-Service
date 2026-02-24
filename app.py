@@ -126,6 +126,7 @@ def grab_bicycle():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    # Load stations (for dropdown)
     cursor.execute("SELECT * FROM Stations")
     stations = cursor.fetchall()
 
@@ -136,22 +137,26 @@ def grab_bicycle():
         station_id = request.form['station_id']
 
         try:
-            # Check student
+            # 1️⃣ Check student
             cursor.execute("SELECT * FROM Students WHERE roll_no = %s", (roll_no,))
             student = cursor.fetchone()
 
             if not student:
+                cursor.close()
+                conn.close()
                 return "Student not found."
 
-            # Check active rental
+            # 2️⃣ Check active rental
             cursor.execute("""
                 SELECT * FROM Rentals
                 WHERE roll_no = %s AND return_time IS NULL
             """, (roll_no,))
             if cursor.fetchone():
+                cursor.close()
+                conn.close()
                 return "You already have an active rental."
 
-            # Find available bike
+            # 3️⃣ Find available bike
             cursor.execute("""
                 SELECT * FROM Bicycles
                 WHERE type=%s AND status='Available' AND station_id=%s
@@ -161,17 +166,19 @@ def grab_bicycle():
             bicycle = cursor.fetchone()
 
             if not bicycle:
+                cursor.close()
+                conn.close()
                 return "No bicycles available at selected station."
 
             grab_time = datetime.now().replace(second=0, microsecond=0)
 
-            # Insert rental
+            # 4️⃣ Insert rental
             cursor.execute("""
                 INSERT INTO Rentals (roll_no, bicycle_id, grab_time, grab_station_id)
                 VALUES (%s, %s, %s, %s)
             """, (roll_no, bicycle['bicycle_id'], grab_time, station_id))
 
-            # Update bike status
+            # 5️⃣ Update bike status
             cursor.execute("""
                 UPDATE Bicycles
                 SET status='In Use'
@@ -180,10 +187,25 @@ def grab_bicycle():
 
             conn.commit()
 
+            # 6️⃣ Get station name for popup
+            cursor.execute("SELECT block_name FROM Stations WHERE station_id=%s", (station_id,))
+            station = cursor.fetchone()
+            station_name = station['block_name']
+
+            formatted_date = grab_time.strftime("%Y-%m-%d")
+            formatted_time = grab_time.strftime("%H:%M")
+
             cursor.close()
             conn.close()
 
-            return redirect(url_for('grab_bicycle'))
+            return render_template(
+                "grab_success.html",
+                name=student['name'],
+                bicycle_id=bicycle['bicycle_id'],
+                station_name=station_name,
+                date=formatted_date,
+                time=formatted_time
+            )
 
         except Exception as e:
             conn.rollback()
@@ -192,7 +214,6 @@ def grab_bicycle():
             return f"Error: {e}"
 
     # ================= GET =================
-    # By default → show TOTAL campus availability
     availability = {"Normal": 0, "EV": 0}
 
     cursor.execute("""
