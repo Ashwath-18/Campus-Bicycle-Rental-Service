@@ -1,48 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Campus Bicycle Rental</title>
+    <title>Campus Bicycle Rental Service</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
+
         body {
             margin: 0;
-            background: #000;
             font-family: 'Segoe UI', sans-serif;
-        }
-
-        .kiosk-wrapper {
-            position: relative;
-            width: 100%;
             height: 100vh;
+            display: flex;
             overflow: hidden;
         }
 
-        .kiosk-wrapper img {
-            width: 100%;
-            height: 100vh;
-            object-fit: cover;   /* fills entire screen */
+        /* LEFT SIDE */
+        .left {
+            width: 50%;
+            background: linear-gradient(135deg, #eef2f3, #dfe9f3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 100px;
+        }
+
+        .title {
+            font-size: 52px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin-top: 25px;
+            font-size: 18px;
+            color: #475569;
         }
 
         .buttons {
-            position: absolute;
-
-            /* Adjust ONLY these two values once */
-            top: 52%;
-            left: 30%;
-
-            transform: translate(-50%, -50%);
+            margin-top: 60px;
             display: flex;
-            flex-direction: column;
             gap: 25px;
-            width: 250px;
         }
 
         .btn {
-            padding: 18px;
-            font-size: 20px;
+            padding: 15px 32px;
+            font-size: 18px;
             font-weight: 600;
-            border-radius: 30px;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
             transition: 0.3s ease;
@@ -53,33 +58,89 @@
             background: linear-gradient(135deg, #22c55e, #16a34a);
         }
 
+        .get-btn:hover {
+            box-shadow: 0 12px 30px rgba(34,197,94,0.4);
+            transform: translateY(-3px);
+        }
+
         .return-btn {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
         }
 
-        .btn:hover {
-            transform: scale(1.05);
+        .return-btn:hover {
+            box-shadow: 0 12px 30px rgba(59,130,246,0.4);
+            transform: translateY(-3px);
+        }
+
+        /* RIGHT SIDE – FULL EXTENDED IMAGE */
+        .right {
+            width: 50%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .right img {
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;   /* fills fully without distortion */
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
+            }
+
+            .left, .right {
+                width: 100%;
+                height: 50vh;
+            }
+
+            .left {
+                padding: 40px;
+            }
+
+            .title {
+                font-size: 34px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .right img {
+                height: 50vh;
+            }
         }
 
     </style>
 </head>
 <body>
 
-<div class="kiosk-wrapper">
+    <div class="left">
+        <div class="title">
+            Campus Bicycle<br>
+            Rental Service
+        </div>
 
-    <img src="{{ url_for('static', filename='images/kiosk-bg.png') }}">
+        <div class="subtitle">
+            Smart Mobility Solution for Sustainable Campus
+        </div>
 
-    <div class="buttons">
-        <a href="/grab">
-            <button class="btn get-btn"> Grab   Bicycle</button>
-        </a>
+        <div class="buttons">
+            <a href="/grab">
+                <button class="btn get-btn">Grab Bicycle</button>
+            </a>
 
-        <a href="/return">
-            <button class="btn return-btn">Return Bicycle</button>
-        </a>
+            <a href="/return">
+                <button class="btn return-btn">Return Bicycle</button>
+            </a>
+        </div>
     </div>
 
-</div>
+    <div class="right">
+        <img src="{{ url_for('static', filename='images/new-campus.png') }}">
+    </div>
 
 </body>
 </html>

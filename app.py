@@ -64,6 +64,8 @@ def return_bike():
     if request.method == 'POST':
         roll_no = request.form['roll_no']
         return_station_id = request.form['station_id']
+        bicycle_type = request.form.get("bicycle_type")
+        battery_percentage = request.form.get("battery_percentage")
 
         cursor.execute("""
             SELECT Rentals.*, Students.name
