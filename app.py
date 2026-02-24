@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect , url_for
 from config import Config
 from database.db_connection import get_db_connection
 from datetime import datetime
@@ -50,27 +50,29 @@ def home():
 
     return render_template('index.html', normal=normal, ev=ev)
 
-
 # ================= RETURN MODULE =================
+from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime
+
 @app.route('/return', methods=['GET', 'POST'])
 def return_bike():
-
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    # Fetch stations for dropdown
     cursor.execute("SELECT * FROM Stations")
     stations = cursor.fetchall()
 
     if request.method == 'POST':
         roll_no = request.form['roll_no']
         return_station_id = request.form['station_id']
-        bicycle_type = request.form.get("bicycle_type")
-        battery_percentage = request.form.get("battery_percentage")
 
+        # Get active rental for this student
         cursor.execute("""
-            SELECT Rentals.*, Students.name
+            SELECT Rentals.*, Students.name, Bicycles.type
             FROM Rentals
             JOIN Students ON Rentals.roll_no = Students.roll_no
+            JOIN Bicycles ON Rentals.bicycle_id = Bicycles.bicycle_id
             WHERE Rentals.roll_no = %s AND Rentals.return_time IS NULL
         """, (roll_no,))
         rental = cursor.fetchone()
@@ -80,10 +82,22 @@ def return_bike():
             conn.close()
             return "No active rental found for this student."
 
+        bicycle_type = rental['type']
+
+        # If EV, redirect to battery selection page
+        if bicycle_type == "EV":
+            cursor.close()
+            conn.close()
+            return redirect(url_for('return_battery',
+                                    roll_no=roll_no,
+                                    station_id=return_station_id))
+
+        # NORMAL bicycle return
         bicycle_id = rental['bicycle_id']
         student_name = rental['name']
         return_time = datetime.now().replace(second=0, microsecond=0)
 
+        # Update Rentals table
         cursor.execute("""
             UPDATE Rentals
             SET return_time = %s,
@@ -91,6 +105,7 @@ def return_bike():
             WHERE rental_id = %s
         """, (return_time, return_station_id, rental['rental_id']))
 
+        # Update Bicycles table
         cursor.execute("""
             UPDATE Bicycles
             SET status = 'Available',
@@ -100,16 +115,19 @@ def return_bike():
 
         conn.commit()
 
+        # Get station name
         cursor.execute("SELECT block_name FROM Stations WHERE station_id = %s", (return_station_id,))
         station = cursor.fetchone()
 
         cursor.close()
         conn.close()
 
+        # Render return success page
         return render_template(
             "return_success.html",
             name=student_name,
             bicycle_id=bicycle_id,
+            bicycle_type=bicycle_type,
             station_name=station['block_name'],
             date=return_time.strftime("%Y-%m-%d"),
             time=return_time.strftime("%H:%M")
@@ -117,8 +135,82 @@ def return_bike():
 
     cursor.close()
     conn.close()
-
     return render_template("return.html", stations=stations)
+
+# ================= RETURN BATTERY MODULE =================
+@app.route('/return_battery', methods=['GET', 'POST'])
+def return_battery():
+    if request.method == 'POST':
+        roll_no = request.form['roll_no']
+        return_station_id = request.form['station_id']
+        battery_percentage = request.form['battery_percentage']
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Get active rental
+        cursor.execute("""
+            SELECT Rentals.*, Students.name, Bicycles.type
+            FROM Rentals
+            JOIN Students ON Rentals.roll_no = Students.roll_no
+            JOIN Bicycles ON Rentals.bicycle_id = Bicycles.bicycle_id
+            WHERE Rentals.roll_no = %s AND Rentals.return_time IS NULL
+        """, (roll_no,))
+        rental = cursor.fetchone()
+
+        if not rental:
+            cursor.close()
+            conn.close()
+            return "No active rental found."
+
+        bicycle_id = rental['bicycle_id']
+        student_name = rental['name']
+        return_time = datetime.now().replace(second=0, microsecond=0)
+
+        # Update Rentals table
+        cursor.execute("""
+            UPDATE Rentals
+            SET return_time = %s,
+                return_station_id = %s
+            WHERE rental_id = %s
+        """, (return_time, return_station_id, rental['rental_id']))
+
+        # Update Bicycles table including battery percentage
+        cursor.execute("""
+            UPDATE Bicycles
+            SET status = 'Available',
+                station_id = %s,
+                battery_percentage = %s
+            WHERE bicycle_id = %s
+        """, (return_station_id, battery_percentage, bicycle_id))
+
+        conn.commit()
+
+        # Get station name
+        cursor.execute("SELECT block_name FROM Stations WHERE station_id = %s", (return_station_id,))
+        station = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        # Render return success page
+        return render_template(
+            "return_success.html",
+            name=student_name,
+            bicycle_id=bicycle_id,
+            bicycle_type='EV',
+            battery_percentage=battery_percentage,
+            station_name=station['block_name'],
+            date=return_time.strftime("%Y-%m-%d"),
+            time=return_time.strftime("%H:%M")
+        )
+
+    # GET request → show battery selection page
+    roll_no = request.args.get('roll_no')
+    return_station_id = request.args.get('station_id')
+    return render_template("return_battery.html",
+                           roll_no=roll_no,
+                           station_id=return_station_id)
 
 
 # ================= GRAB MODULE =================

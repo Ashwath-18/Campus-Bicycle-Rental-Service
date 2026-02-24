@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Battery Percentage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center mb-4">🔋 EV Battery Percentage</h2>
+        <form method="POST" action="{{ url_for('return_bike') }}">
+            <input type="hidden" name="roll_no" value="{{ roll_no }}">
+            <input type="hidden" name="station_id" value="{{ station_id }}">
+            <input type="hidden" name="bicycle_type" value="EV">
+
+            <div class="mb-4">
+                <label class="form-label">Select Battery Percentage</label>
+                <input type="range" class="form-range" min="0" max="100" value="50"
+                       name="battery_percentage" id="batteryRange"
+                       oninput="document.getElementById('batteryValue').innerText = this.value">
+                <div class="battery-value mt-2">Current: <span id="batteryValue">50</span>%</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Continue</button>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

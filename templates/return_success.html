@@ -2,77 +2,30 @@
 <html>
 <head>
     <title>Return Successful</title>
-
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #141e30, #243b55);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .popup {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            text-align: center;
-            animation: pop 0.3s ease-in-out;
-        }
-
-        @keyframes pop {
-            from { transform: scale(0.7); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        h2 {
-            color: #27ae60;
-        }
-
-        .msg {
-            margin-top: 20px;
-            font-size: 18px;
-            line-height: 1.8;
-        }
-
-        .btn {
-            margin-top: 50px;
-            padding: 10px 50px;
-            background-color: #243b55;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-        }
-
-        .btn:hover {
-            background-color: #141e30;
-        }
-
-        .button-section {
-            margin-top: 30px;
-        }
+        body { margin:0; font-family: Arial,sans-serif; background: linear-gradient(to right,#141e30,#243b55);
+               display:flex; justify-content:center; align-items:center; height:100vh; }
+        .popup { background:white; padding:40px; border-radius:12px; box-shadow:0 15px 35px rgba(0,0,0,0.3); text-align:center; }
+        h2 { color:#27ae60; }
+        .msg { margin-top:20px; font-size:18px; line-height:1.8; }
+        .highlight { color:#2980b9; font-weight:600; }
+        .btn { margin-top:50px; padding:10px 50px; background-color:#243b55; color:white; text-decoration:none; border-radius:6px; }
+        .btn:hover { background-color:#141e30; }
     </style>
 </head>
-
 <body>
-
 <div class="popup">
     <h2>Return Successful ✅</h2>
-
     <div class="msg">
         <strong>{{ name }}</strong><br>
         Has returned the bicycle - <strong>{{ bicycle_id }}</strong><br>
-        At <span style="color:#2980b9;"></span><strong>{{ station_name }}</strong>
-        On {{ time }} , {{ date }}
+        Type: <strong>{{ bicycle_type }}</strong><br>
+        At <span class="highlight">{{ station_name }}</span><br>
+        On {{ time }}, {{ date }}
     </div>
-
     <div class="button-section">
-    <a href="/" class="btn">Back to Home</a>
+        <a href="/" class="btn">Back to Home</a>
+    </div>
 </div>
-</div>
-
 </body>
 </html>
