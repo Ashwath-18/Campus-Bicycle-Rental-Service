@@ -243,10 +243,29 @@ def grab_bicycle():
                 SELECT * FROM Rentals
                 WHERE roll_no = %s AND return_time IS NULL
             """, (roll_no,))
-            if cursor.fetchone():
+
+            active_rental = cursor.fetchone()
+            if active_rental:
+            # Get extra details of active rental
+                cursor.execute("""
+                    SELECT Bicycles.type, Stations.block_name
+                    FROM Rentals
+                    JOIN Bicycles ON Rentals.bicycle_id = Bicycles.bicycle_id
+                    JOIN Stations ON Rentals.grab_station_id = Stations.station_id
+                    WHERE Rentals.roll_no = %s AND Rentals.return_time IS NULL
+                """, (roll_no,))
+
+                rental_info = cursor.fetchone()
+
                 cursor.close()
                 conn.close()
-                return "You already have an active rental."
+
+                return render_template(
+                    "grab_error.html",
+                    roll_no=roll_no,
+                    bicycle_type=rental_info['type'],
+                    station_name=rental_info['block_name']
+                )
 
             # 3️⃣ Find available bike
             cursor.execute("""
@@ -263,7 +282,17 @@ def grab_bicycle():
             if not bicycle:
                 cursor.close()
                 conn.close()
-                return "No bicycles available at selected station."
+
+                if bicycle_type == "Normal":
+                    message = "Normal bicycles are currently not available at this station."
+                else:
+                    message = "EV bicycles are currently not available at this station."
+
+                return render_template(
+                    "grab_unavailable.html",
+                    message=message,
+                    station_id=station_id
+                )
 
             grab_time = datetime.now().replace(second=0, microsecond=0)
 

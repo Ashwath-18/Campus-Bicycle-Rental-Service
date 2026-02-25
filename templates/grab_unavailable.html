@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bicycle Not Available</title>
+    <style>
+        body {
+            margin:0;
+            font-family: Arial,sans-serif;
+            background: linear-gradient(to right,#141e30,#243b55);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+        .popup {
+            background:white;
+            padding:40px;
+            border-radius:12px;
+            box-shadow:0 15px 35px rgba(0,0,0,0.3);
+            text-align:center;
+        }
+        h2 { color:#f39c12; }
+        .msg { margin-top:20px; font-size:18px; line-height:1.8; }
+        .btn {
+            margin-top:30px;
+            padding:10px 50px;
+            background-color:#243b55;
+            color:white;
+            text-decoration:none;
+            border-radius:6px;
+            display:inline-block;
+        }
+        .btn:hover { background-color:#141e30; }
+    </style>
+</head>
+<body>
+
+<div class="popup">
+    <h2>Bicycle Not Available ⚠️</h2>
+
+    <div class="msg">
+        {{ message }}
+    </div>
+
+    <a href="{{ url_for('grab_bicycle') }}" class="btn">
+        Back to Grab Page
+    </a>
+</div>
+
+</body>
+</html>
