@@ -75,10 +75,35 @@ def return_bike():
         """, (roll_no,))
         rental = cursor.fetchone()
 
+        # First check if student exists
+        cursor.execute("SELECT * FROM Students WHERE roll_no = %s", (roll_no,))
+        student = cursor.fetchone()
+
+        if not student:
+            cursor.close()
+            conn.close()
+            return render_template(
+                "invalid_entry.html",
+                roll_no=roll_no
+            )
+
+        # Then check active rental
+        cursor.execute("""
+            SELECT Rentals.*, Students.name, Bicycles.type
+            FROM Rentals
+            JOIN Students ON Rentals.roll_no = Students.roll_no
+            JOIN Bicycles ON Rentals.bicycle_id = Bicycles.bicycle_id
+            WHERE Rentals.roll_no = %s AND Rentals.return_time IS NULL
+        """, (roll_no,))
+        rental = cursor.fetchone()
+
         if not rental:
             cursor.close()
             conn.close()
-            return "No active rental found for this student."
+            return render_template(
+                "no_active_rental.html",
+                roll_no=roll_no
+        )
 
         bicycle_type = rental['type']
 
@@ -236,7 +261,11 @@ def grab_bicycle():
             if not student:
                 cursor.close()
                 conn.close()
-                return "Student not found."
+
+                return render_template(
+                    "invalid_entry.html",
+                    roll_no=roll_no
+                )
 
             # 2️⃣ Check active rental
             cursor.execute("""

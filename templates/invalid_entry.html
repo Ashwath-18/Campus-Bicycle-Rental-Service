@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bicycle Not Available</title>
+    <title>Invalid Roll Number</title>
     <style>
         body {
             margin:0;
@@ -19,10 +19,10 @@
             box-shadow:0 15px 35px rgba(0,0,0,0.3);
             text-align:center;
         }
-        h2 { color:#f39c12; }
+        h2 { color:#e74c3c; }
         .msg { margin-top:20px; font-size:18px; line-height:1.8; }
         .btn {
-            margin-top:30px;
+            margin-top:20px;
             padding:10px 50px;
             background-color:#243b55;
             color:white;
@@ -36,14 +36,11 @@
 <body>
 
 <div class="popup">
-    <h2>BICYCLE NOT AVAILABLE ⚠️</h2>
+    <h2>INVALID STUDENT<br>
+    ROLL NUMBER ❌</h2>
 
-    <div class="msg">
-        {{ message }}
-    </div>
-
-    <a href="{{ url_for('grab_bicycle') }}" class="btn">
-        BACK TO GRAB PAGE
+    <a href="{{ url_for('home') }}" class="btn">
+        BACK TO HOME 
     </a>
 </div>
 

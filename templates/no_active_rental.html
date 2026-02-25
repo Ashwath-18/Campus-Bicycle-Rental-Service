@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bicycle Not Available</title>
+    <title>No Active Rental</title>
     <style>
         body {
             margin:0;
@@ -36,14 +36,15 @@
 <body>
 
 <div class="popup">
-    <h2>BICYCLE NOT AVAILABLE ⚠️</h2>
+    <h2>NO ACTIVE RENTAL ⚠️</h2>
 
     <div class="msg">
-        {{ message }}
+        STUDENT <strong>{{ roll_no }}</strong><br>
+        DOES NOT HAVE ANY ACTIVE RENTAL
     </div>
 
-    <a href="{{ url_for('grab_bicycle') }}" class="btn">
-        BACK TO GRAB PAGE
+    <a href="{{ url_for('return_bike') }}" class="btn">
+        BACK TO RETURN PAGE
     </a>
 </div>
 
