@@ -7,69 +7,121 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #141e30, #243b55);
+            background: linear-gradient(135deg,#2c2c2c,#535454);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
         }
 
         .popup {
             background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            padding: 45px;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             text-align: center;
-            animation: pop 0.3s ease-in-out;
+            width: 430px;
+
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            animation: fadeSlide 0.8s ease forwards;
+        }
+
+        @keyframes fadeSlide {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .tick {
+            font-size: 65px;
+            color: #4CAF50;
+            animation: pop 0.6s ease, glow 1.5s infinite alternate;
         }
 
         @keyframes pop {
-            from { transform: scale(0.7); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0.5); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #4CAF50; }
+            to { text-shadow: 0 0 20px #4CAF50; }
         }
 
         h2 {
-            color: #2980b9;
+            color: #444;
+            margin-top: 15px;
+            margin-bottom: 10px;
         }
 
         .msg {
             margin-top: 20px;
-            margin-bottom: 30px;
-            font-size: 18px;
+            font-size: 17px;
             line-height: 1.8;
+            color: #333;
         }
 
         .button-section {
-            margin-top: 40px;
+            margin-top: 35px;
         }
 
         .btn {
-            padding: 10px 50px;
-            background-color: #243b55;
+            padding: 10px 55px;
+            background-color: #2c2c2c;
             color: white;
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.3s ease;
         }
 
         .btn:hover {
-            background-color: #141e30;
+            background-color: #4CAF50;
+            transform: scale(1.08);
+        }
+
+        .redirect-msg {
+            margin-top: 15px;
+            font-size: 13px;
+            color: gray;
         }
     </style>
+
+    <script>
+        setTimeout(function(){
+            window.location.href = "{{ url_for('home') }}";
+        }, 3000);
+    </script>
+
 </head>
 
 <body>
 
 <div class="popup">
-    <h2>GRAB SUCCESSFUL 🚲</h2>
+
+    <div class="tick">🚲</div>
+
+    <h2>GRAB SUCCESSFUL</h2>
+
     <div class="msg">
         <strong>{{ name }}</strong><br>
         HAS GRABBED THE BICYCLE - <strong>{{ bicycle_id }}</strong><br>
-        FROM <span style="color:#2980b9;"><strong>{{ station_name }}</strong></span>
-        AT  {{ time }} , {{ date }}
+        FROM <span style="color:#4CAF50;"><strong>{{ station_name }}</strong></span><br>
+        AT {{ time }}, {{ date }}
     </div>
+
     <div class="button-section">
         <a href="{{ url_for('home') }}" class="btn">BACK TO HOME</a>
     </div>
+
+    <div class="redirect-msg">
+        Redirecting to home in 3 seconds...
+    </div>
+
 </div>
+
 </body>
 </html>
