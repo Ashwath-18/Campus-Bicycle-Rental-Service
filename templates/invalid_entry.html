@@ -2,45 +2,84 @@
 <html>
 <head>
     <title>Invalid Roll Number</title>
+
+    <!-- Auto Redirect after 5 seconds -->
+    <meta http-equiv="refresh" content="5;url={{ url_for('home') }}">
+
     <style>
         body {
             margin:0;
-            font-family: Arial,sans-serif;
-            background: linear-gradient(to right,#141e30,#243b55);
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg,#eef2f3, #dfe9f3);
+            background-color: grey;
             display:flex;
             justify-content:center;
             align-items:center;
             height:100vh;
         }
+
         .popup {
             background:white;
-            padding:40px;
-            border-radius:12px;
-            box-shadow:0 15px 35px rgba(0,0,0,0.3);
+            padding:50px;
+            border-radius:15px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.2);
             text-align:center;
+
+            animation: fadeSlide 0.6s ease-out;
         }
-        h2 { color:#e74c3c; }
-        .msg { margin-top:20px; font-size:18px; line-height:1.8; }
+
+        @keyframes fadeSlide {
+            from {
+                opacity:0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity:1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color:#e74c3c;
+            font-size:26px;
+        }
+
+        .msg {
+            margin-top:15px;
+            font-size:16px;
+            color:#555;
+        }
+
         .btn {
-            margin-top:20px;
-            padding:10px 50px;
-            background-color:#243b55;
+            margin-top:25px;
+            padding:12px 60px;
+            background-color:#4CAF50;
             color:white;
             text-decoration:none;
-            border-radius:6px;
+            border-radius:8px;
             display:inline-block;
+            transition:0.3s;
         }
-        .btn:hover { background-color:#141e30; }
+
+        .btn:hover {
+            background-color:#45a049;
+            transform: scale(1.05);
+        }
     </style>
 </head>
+
 <body>
 
 <div class="popup">
-    <h2>INVALID STUDENT<br>
-    ROLL NUMBER ❌</h2>
+    <h2>INVALID STUDENT<br>ROLL NUMBER ❌</h2>
+
+    <div class="msg">
+        The entered roll number is not valid.<br>
+        Redirecting to home page...
+    </div>
 
     <a href="{{ url_for('home') }}" class="btn">
-        BACK TO HOME 
+        BACK TO HOME
     </a>
 </div>
 
